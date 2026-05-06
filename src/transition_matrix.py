@@ -13,6 +13,8 @@ from collections import defaultdict
 import heapq
 import networkx as nx
 import webcolors
+from collections import defaultdict, Counter
+
 # import pygraphviz as pgv
 
 import math
@@ -75,65 +77,55 @@ def build_transition_matrix(df):
             
     return transition_matrix
 
+def get_top_observed_sequences(df, start_state, length, n):
+    """
+    Retourne les n séquences réellement observées les plus fréquentes
+    à partir d'un état donné.
+    """
+    sequences = df.apply(process_sequence, axis=1)
 
-def generate_most_probable_sequence(start_color, transition_matrix, length):
-    sequence = [start_color]
-    
-    for _ in range(length - 1):
-        last_color = sequence[-1]
-        
-        # Si il n'y a pas de transition possible, on arrête (on est à une couleur terminale)
-        if last_color not in transition_matrix:
-            break
-        
-        next_colors = transition_matrix[last_color]
-        next_color = max(next_colors, key=next_colors.get)  # Choisir la couleur avec la plus grande probabilité
-        
-        sequence.append(next_color)
-        
-    print(f"Séquence la plus probable à partir de {start_color}:")
-    print(sequence)
-    return sequence
+    observed = Counter()
 
+    for seq in sequences:
+        for i, state in enumerate(seq):
+            if state == start_state:
+                observed_seq = tuple(seq[i:i + length])
+                observed[observed_seq] += 1
 
-def generate_top_n_sequences(start_color, transition_matrix, length, n):
-    # Utilisation d'un heap pour garder les n meilleures séquences
-    top_sequences = [([start_color], 1)]  # Liste de tuples (séquence, probabilité)
-    
-    for _ in range(length - 1):
-        new_sequences = []
-        
-        # Explorer toutes les séquences actuellement dans le top
-        for sequence, prob in top_sequences:
-            last_color = sequence[-1]
-            
-            # Si la couleur n'a pas de transitions possibles, on arrête
-            if last_color not in transition_matrix:
-                new_sequences.append((sequence, prob))
-                continue
-            
-            # Récupérer les transitions possibles et les probabilités associées
-            next_colors = transition_matrix[last_color]
-            
-            for next_color, transition_prob in next_colors.items():
-                # Créer une nouvelle séquence avec cette transition
-                new_sequence = sequence + [next_color]
-                new_prob = prob * transition_prob  # Calculer la probabilité de la nouvelle séquence
-                
-                new_sequences.append((new_sequence, new_prob))
-        
-        # Trier les nouvelles séquences par probabilité décroissante et ne garder que les n meilleures
-        top_sequences = heapq.nlargest(n, new_sequences, key=lambda x: x[1])
-    
-    top_sequences_sorted = sorted(top_sequences, key=lambda x: x[1], reverse=True)
-    # Extraire uniquement les séquences sans les probabilités
-    top_n_sequences = [seq for seq, prob in top_sequences_sorted]
-    
-    print(f"Les {n} séquences les plus probables à partir de {start_color}:")
-    for seq in top_n_sequences:
-        print(seq)
-    
-    return top_n_sequences
+    total = sum(observed.values())
+
+    if total == 0:
+        return []
+
+    top_sequences = observed.most_common(n)
+
+    return [
+        {
+            "sequence": list(seq),
+            "count": count,
+            "frequency": count / total
+        }
+        for seq, count in top_sequences
+    ]
+
+def get_top_observed_sequences_in_corpus(df, length, n):
+    """
+    Retourne les n séquences réellement observées les plus fréquentes
+    dans tout le corpus, tronquées à length items.
+    """
+    sequences = df.apply(process_sequence, axis=1)
+
+    observed = Counter(tuple(seq[:length]) for seq in sequences)
+    total = sum(observed.values())
+
+    return [
+        {
+            "sequence": list(seq),
+            "count": count,
+            "frequency": count / total
+        }
+        for seq, count in observed.most_common(n)
+    ]
 
     
 import math
@@ -292,16 +284,48 @@ def run_analysis_on_dataframe(df, output_dir, start_color, start_tree, length, n
 
         transition_matrix = build_transition_matrix(df)
 
-        generate_most_probable_sequence(start_color, transition_matrix, length)
-        print("\n")
-
         with open("top_sequences.txt", "w") as f:
+            f.write("Les 10 séquences complètes les plus observées dans le corpus :\n")
+        
+            top_corpus_sequences = get_top_observed_sequences_in_corpus(
+                        df=df,
+                        length=length,
+                        n=10
+                    )
+            if not top_corpus_sequences:
+                f.write("Aucune séquence observée.\n")
+            else:
+                for item in top_corpus_sequences:
+                    f.write(
+                        f"{item['sequence']} "
+                        f"| count={item['count']} "
+                        f"| freq={item['frequency']:.3f}\n"
+                    )
+        
+            f.write("\n" + "=" * 80 + "\n")
+        
             for clef in transition_matrix.keys():
-                f.write(f"\nLes {n} séquences les plus probables à partir de {clef}:\n")
-                top_n_sequences = generate_top_n_sequences(clef, transition_matrix, length, n)
-                for seq in top_n_sequences:
-                    f.write(str(seq))
-                    f.write("\n")
+                f.write(f"\nLes {n} séquences réellement observées les plus fréquentes à partir de {clef}:\n")
+        
+                top_observed_sequences = get_top_observed_sequences(
+                    df=df,
+                    start_state=clef,
+                    length=length,
+                    n=n
+                )
+        
+                if not top_observed_sequences:
+                    f.write("Aucune séquence observée.\n")
+                    continue
+        
+                for item in top_observed_sequences:
+                    f.write(
+                        f"{item['sequence']} "
+                        f"| count={item['count']} "
+                        f"| freq={item['frequency']:.3f}\n"
+                    )
+
+
 
         plot_transition_tree_v_weights_curved_labels(transition_matrix, partition_value, partition)
 
