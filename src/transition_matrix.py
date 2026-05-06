@@ -199,10 +199,12 @@ def plot_transition_tree_v_weights_curved_labels(transition_matrix, partition_va
             edge_colors.append("lightgray")
             edge_widths.append(lw)
 
-    plt.figure(figsize=(10,10))
+    plt.figure(figsize=(10, 10))
     ax = plt.gca()
-    node_radius = 0.35
+    
     node_size = 1400
+    node_radius = math.sqrt(node_size) / 2
+
 
     nx.draw_networkx_nodes(G, pos, node_size=node_size,
                            node_color="lightblue", alpha=0.9)
@@ -215,8 +217,10 @@ def plot_transition_tree_v_weights_curved_labels(transition_matrix, partition_va
         arrowstyle="-|>",
         arrowsize=15,
         connectionstyle="arc3,rad=0.25",
+        min_source_margin=node_radius,
         min_target_margin=node_radius
     )
+
 
     nx.draw_networkx_labels(G, pos, font_size=10, font_weight="bold")
 
@@ -379,7 +383,7 @@ def main(
     
 # file ="labels_T.csv"
 file="extraction_rda.csv"
-partition = None
+partition = "decennie"
 metadata_file = "metadata.tsv"
 
 start_color = 'start'
