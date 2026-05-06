@@ -1,0 +1,91 @@
+
+Les 5 séquences les plus probables à partir de start:
+['start', 'presidential_office', 'conseil', 'presidential_office', 'presidential_office']
+['start', 'presidential_office', 'conseil', 'presidential_office', 'conseil']
+['start', 'presidential_office', 'conseil', 'consulting_members', 'presidential_office']
+['start', 'presidential_office', 'conseil', 'presidential_office', 'consulting_members']
+['start', 'presidential_office', 'conseil', 'presidential_office', 'other']
+
+Les 5 séquences les plus probables à partir de college_etudiant:
+['college_etudiant', 'presidential_office', 'conseil', 'presidential_office', 'presidential_office']
+['college_etudiant', 'presidential_office', 'presidential_office', 'conseil', 'presidential_office']
+['college_etudiant', 'presidential_office', 'conseil', 'presidential_office', 'conseil']
+['college_etudiant', 'presidential_office', 'conseil', 'consulting_members', 'presidential_office']
+['college_etudiant', 'presidential_office', 'conseil', 'presidential_office', 'consulting_members']
+
+Les 5 séquences les plus probables à partir de consulting_members:
+['consulting_members', 'presidential_office', 'conseil', 'presidential_office', 'presidential_office']
+['consulting_members', 'presidential_office', 'conseil', 'presidential_office', 'conseil']
+['consulting_members', 'presidential_office', 'conseil', 'consulting_members', 'presidential_office']
+['consulting_members', 'presidential_office', 'conseil', 'presidential_office', 'consulting_members']
+['consulting_members', 'presidential_office', 'conseil', 'presidential_office', 'other']
+
+Les 5 séquences les plus probables à partir de presidential_office:
+['presidential_office', 'conseil', 'presidential_office', 'conseil', 'presidential_office']
+['presidential_office', 'conseil', 'presidential_office', 'conseil', 'consulting_members']
+['presidential_office', 'conseil', 'presidential_office', 'other', 'presidential_office']
+['presidential_office', 'conseil', 'presidential_office', 'presidential_office', 'presidential_office']
+['presidential_office', 'conseil', 'presidential_office', 'consulting_members', 'presidential_office']
+
+Les 5 séquences les plus probables à partir de college_a:
+['college_a', 'presidential_office', 'conseil', 'presidential_office', 'presidential_office']
+['college_a', 'presidential_office', 'conseil', 'presidential_office', 'conseil']
+['college_a', 'presidential_office', 'conseil', 'consulting_members', 'presidential_office']
+['college_a', 'presidential_office', 'conseil', 'presidential_office', 'consulting_members']
+['college_a', 'presidential_office', 'conseil', 'presidential_office', 'other']
+
+Les 5 séquences les plus probables à partir de ext_members:
+['ext_members', 'presidential_office', 'conseil', 'presidential_office', 'presidential_office']
+['ext_members', 'presidential_office', 'conseil', 'presidential_office', 'conseil']
+['ext_members', 'presidential_office', 'conseil', 'consulting_members', 'presidential_office']
+['ext_members', 'presidential_office', 'conseil', 'presidential_office', 'consulting_members']
+['ext_members', 'presidential_office', 'conseil', 'presidential_office', 'other']
+
+Les 5 séquences les plus probables à partir de college_b:
+['college_b', 'presidential_office', 'conseil', 'presidential_office', 'presidential_office']
+['college_b', 'presidential_office', 'conseil', 'presidential_office', 'conseil']
+['college_b', 'presidential_office', 'conseil', 'consulting_members', 'presidential_office']
+['college_b', 'presidential_office', 'conseil', 'presidential_office', 'consulting_members']
+['college_b', 'presidential_office', 'conseil', 'presidential_office', 'other']
+
+Les 5 séquences les plus probables à partir de college_biatss:
+['college_biatss', 'presidential_office', 'conseil', 'presidential_office', 'presidential_office']
+['college_biatss', 'presidential_office', 'conseil', 'presidential_office', 'conseil']
+['college_biatss', 'presidential_office', 'conseil', 'consulting_members', 'presidential_office']
+['college_biatss', 'presidential_office', 'conseil', 'presidential_office', 'consulting_members']
+['college_biatss', 'presidential_office', 'conseil', 'presidential_office', 'other']
+
+Les 5 séquences les plus probables à partir de conseil:
+['conseil', 'presidential_office', 'conseil', 'presidential_office', 'presidential_office']
+['conseil', 'presidential_office', 'conseil', 'presidential_office', 'conseil']
+['conseil', 'presidential_office', 'conseil', 'consulting_members', 'presidential_office']
+['conseil', 'presidential_office', 'conseil', 'presidential_office', 'consulting_members']
+['conseil', 'presidential_office', 'conseil', 'presidential_office', 'other']
+
+Les 5 séquences les plus probables à partir de other:
+['other', 'presidential_office', 'conseil', 'presidential_office', 'presidential_office']
+['other', 'presidential_office', 'conseil', 'presidential_office', 'conseil']
+['other', 'presidential_office', 'conseil', 'consulting_members', 'presidential_office']
+['other', 'presidential_office', 'conseil', 'presidential_office', 'consulting_members']
+['other', 'presidential_office', 'conseil', 'presidential_office', 'other']
+
+Les 5 séquences les plus probables à partir de unknown:
+['unknown', 'end']
+['unknown', 'presidential_office', 'conseil', 'presidential_office', 'presidential_office']
+['unknown', 'presidential_office', 'conseil', 'presidential_office', 'conseil']
+['unknown', 'presidential_office', 'conseil', 'consulting_members', 'presidential_office']
+['unknown', 'presidential_office', 'conseil', 'presidential_office', 'consulting_members']
+
+Les 5 séquences les plus probables à partir de college_c:
+['college_c', 'consulting_members', 'presidential_office', 'conseil', 'presidential_office']
+['college_c', 'consulting_members', 'presidential_office', 'conseil', 'consulting_members']
+['college_c', 'consulting_members', 'presidential_office', 'presidential_office', 'presidential_office']
+['college_c', 'consulting_members', 'college_a', 'consulting_members', 'presidential_office']
+['college_c', 'consulting_members', 'college_a', 'presidential_office', 'presidential_office']
+
+Les 5 séquences les plus probables à partir de college_members:
+['college_members', 'college_b', 'presidential_office', 'conseil', 'presidential_office']
+['college_members', 'college_b', 'presidential_office', 'conseil', 'consulting_members']
+['college_members', 'college_b', 'consulting_members', 'presidential_office', 'presidential_office']
+['college_members', 'college_b', 'presidential_office', 'presidential_office', 'presidential_office']
+['college_members', 'college_b', 'presidential_office', 'consulting_members', 'presidential_office']
