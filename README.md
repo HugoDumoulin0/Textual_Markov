@@ -34,6 +34,23 @@ Par defaut, le script lit :
 
 et genere les sorties dans `src/outputs/`, partitionnees par la colonne `decennie`.
 
+## Pour reproduire les resultats de l'article
+
+Depuis la racine du projet, apres installation des dependances :
+
+```bash
+python3 src/transition_matrix.py \
+  --input src/extraction_rda.csv \
+  --metadata src/metadata.tsv \
+  --partition decennie \
+  --filename-col id \
+  --output-root src/outputs \
+  --length 5 \
+  --top-n 5
+```
+
+Cette commande regenere les resultats par decennie dans `src/outputs/`.
+
 ## Options utiles
 
 Analyser tout le corpus sans metadata :
@@ -79,3 +96,7 @@ python3 -m unittest discover -s tests
 ```
 
 Les tests couvrent la logique de base : coupe au premier `NaN`, calcul et normalisation des transitions, et comptage des sequences observees.
+
+## Reference
+
+Diwersy, S., Dumoulin, H., Bordes, E., Montrichard, C., Sitri, F. (2026), "La democratie universitaire vue a travers les comptes rendus de CA : analyse discursive diachronique (1984-2018)", colloque Democratie a l'universite, Universite d'Orleans.
