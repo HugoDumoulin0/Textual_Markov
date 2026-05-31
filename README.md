@@ -34,7 +34,7 @@ Par defaut, le script lit :
 
 et genere les sorties dans `src/outputs/`, partitionnees par la colonne `decennie`.
 
-## Pour reproduire les resultats de l'article
+## Pour reproduire les résultats de l'article
 
 Depuis la racine du projet, apres installation des dependances :
 
@@ -99,4 +99,4 @@ Les tests couvrent la logique de base : coupe au premier `NaN`, calcul et normal
 
 ## Reference
 
-Diwersy, S., Dumoulin, H., Bordes, E., Montrichard, C., Sitri, F. (2026), "La democratie universitaire vue a travers les comptes rendus de CA : analyse discursive diachronique (1984-2018)", colloque Democratie a l'universite, Universite d'Orleans.
+Diwersy, S., Dumoulin, H., Bordes, E., Montrichard, C., Sitri, F. (2026), "La democratie universitaire vue a travers les comptes rendus de CA : analyse discursive diachronique (1984-2018)", colloque Démocratie a l'universite, Universite d'Orleans.
