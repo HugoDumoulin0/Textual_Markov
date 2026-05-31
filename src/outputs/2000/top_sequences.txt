@@ -1,0 +1,104 @@
+Les 10 sequences observees les plus frequentes dans le corpus (longueur 5) :
+['start', 'presidential_office', 'presidential_office', 'college_etudiant', 'presidential_office'] | count=9 | freq=0.087
+['start', 'presidential_office', 'presidential_office', 'college_a', 'presidential_office'] | count=9 | freq=0.087
+['start', 'presidential_office', 'presidential_office', 'college_etudiant', 'college_etudiant'] | count=5 | freq=0.049
+['start', 'presidential_office', 'presidential_office', 'presidential_office', 'college_etudiant'] | count=5 | freq=0.049
+['start', 'presidential_office', 'presidential_office', 'presidential_office', 'presidential_office'] | count=5 | freq=0.049
+['start', 'presidential_office', 'presidential_office', 'college_b', 'presidential_office'] | count=4 | freq=0.039
+['start', 'presidential_office', 'presidential_office', 'presidential_office', 'college_a'] | count=3 | freq=0.029
+['start', 'presidential_office', 'presidential_office', 'presidential_office', 'other'] | count=3 | freq=0.029
+['start', 'presidential_office', 'presidential_office', 'other', 'presidential_office'] | count=3 | freq=0.029
+['start', 'presidential_office', 'presidential_office', 'unknown', 'other'] | count=2 | freq=0.019
+
+================================================================================
+
+Les 5 sequences observees les plus frequentes a partir de start:
+['start', 'presidential_office', 'presidential_office', 'college_etudiant', 'presidential_office'] | count=9 | freq=0.087
+['start', 'presidential_office', 'presidential_office', 'college_a', 'presidential_office'] | count=9 | freq=0.087
+['start', 'presidential_office', 'presidential_office', 'college_etudiant', 'college_etudiant'] | count=5 | freq=0.049
+['start', 'presidential_office', 'presidential_office', 'presidential_office', 'college_etudiant'] | count=5 | freq=0.049
+['start', 'presidential_office', 'presidential_office', 'presidential_office', 'presidential_office'] | count=5 | freq=0.049
+
+Les 5 sequences observees les plus frequentes a partir de college_etudiant:
+['college_etudiant', 'presidential_office', 'college_etudiant', 'presidential_office', 'college_etudiant'] | count=18 | freq=0.018
+['college_etudiant', 'consulting_members', 'college_etudiant', 'consulting_members', 'college_etudiant'] | count=10 | freq=0.010
+['college_etudiant', 'unknown', 'end'] | count=9 | freq=0.009
+['college_etudiant', 'presidential_office', 'college_etudiant', 'presidential_office', 'presidential_office'] | count=8 | freq=0.008
+['college_etudiant', 'presidential_office', 'presidential_office', 'college_etudiant', 'presidential_office'] | count=7 | freq=0.007
+
+Les 5 sequences observees les plus frequentes a partir de consulting_members:
+['consulting_members', 'other', 'consulting_members', 'other', 'consulting_members'] | count=27 | freq=0.014
+['consulting_members', 'consulting_members', 'consulting_members', 'consulting_members', 'consulting_members'] | count=26 | freq=0.014
+['consulting_members', 'college_b', 'consulting_members', 'college_b', 'consulting_members'] | count=24 | freq=0.013
+['consulting_members', 'presidential_office', 'conseil', 'consulting_members', 'presidential_office'] | count=23 | freq=0.012
+['consulting_members', 'college_a', 'consulting_members', 'college_a', 'consulting_members'] | count=14 | freq=0.007
+
+Les 5 sequences observees les plus frequentes a partir de presidential_office:
+['presidential_office', 'conseil', 'consulting_members', 'presidential_office', 'conseil'] | count=34 | freq=0.011
+['presidential_office', 'end'] | count=31 | freq=0.010
+['presidential_office', 'other', 'presidential_office', 'other', 'presidential_office'] | count=29 | freq=0.010
+['presidential_office', 'conseil', 'presidential_office', 'conseil', 'presidential_office'] | count=28 | freq=0.009
+['presidential_office', 'college_etudiant', 'presidential_office', 'college_etudiant', 'presidential_office'] | count=26 | freq=0.009
+
+Les 5 sequences observees les plus frequentes a partir de college_a:
+['college_a', 'college_a', 'college_a', 'college_a', 'college_a'] | count=22 | freq=0.016
+['college_a', 'presidential_office', 'college_a', 'presidential_office', 'college_a'] | count=12 | freq=0.009
+['college_a', 'consulting_members', 'college_a', 'consulting_members', 'college_a'] | count=9 | freq=0.007
+['college_a', 'consulting_members', 'presidential_office', 'conseil', 'consulting_members'] | count=8 | freq=0.006
+['college_a', 'other', 'college_a', 'other', 'college_a'] | count=8 | freq=0.006
+
+Les 5 sequences observees les plus frequentes a partir de ext_members:
+['ext_members', 'presidential_office', 'other', 'other', 'other'] | count=3 | freq=0.015
+['ext_members', 'presidential_office', 'conseil', 'unknown', 'presidential_office'] | count=3 | freq=0.015
+['ext_members', 'college_etudiant', 'presidential_office', 'college_etudiant', 'presidential_office'] | count=2 | freq=0.010
+['ext_members', 'consulting_members', 'presidential_office', 'college_etudiant', 'presidential_office'] | count=2 | freq=0.010
+['ext_members', 'college_a', 'consulting_members', 'college_a', 'college_b'] | count=2 | freq=0.010
+
+Les 5 sequences observees les plus frequentes a partir de college_b:
+['college_b', 'consulting_members', 'college_b', 'consulting_members', 'college_b'] | count=13 | freq=0.014
+['college_b', 'presidential_office', 'college_b', 'presidential_office', 'college_b'] | count=9 | freq=0.009
+['college_b', 'consulting_members', 'college_b', 'consulting_members', 'presidential_office'] | count=8 | freq=0.008
+['college_b', 'consulting_members', 'presidential_office', 'conseil', 'presidential_office'] | count=7 | freq=0.007
+['college_b', 'presidential_office', 'presidential_office', 'college_b', 'presidential_office'] | count=6 | freq=0.006
+
+Les 5 sequences observees les plus frequentes a partir de college_biatss:
+['college_biatss', 'presidential_office', 'college_etudiant', 'presidential_office', 'college_etudiant'] | count=4 | freq=0.007
+['college_biatss', 'presidential_office', 'college_biatss', 'presidential_office', 'college_b'] | count=4 | freq=0.007
+['college_biatss', 'presidential_office', 'presidential_office', 'conseil', 'presidential_office'] | count=4 | freq=0.007
+['college_biatss', 'consulting_members', 'college_biatss', 'consulting_members', 'college_biatss'] | count=3 | freq=0.005
+['college_biatss', 'presidential_office', 'other', 'presidential_office', 'presidential_office'] | count=3 | freq=0.005
+
+Les 5 sequences observees les plus frequentes a partir de conseil:
+['conseil', 'consulting_members', 'presidential_office', 'conseil', 'consulting_members'] | count=16 | freq=0.027
+['conseil', 'consulting_members', 'presidential_office', 'conseil', 'presidential_office'] | count=16 | freq=0.027
+['conseil', 'presidential_office', 'conseil', 'presidential_office', 'conseil'] | count=13 | freq=0.022
+['conseil', 'presidential_office', 'end'] | count=10 | freq=0.017
+['conseil', 'unknown', 'end'] | count=8 | freq=0.013
+
+Les 5 sequences observees les plus frequentes a partir de other:
+['other', 'other', 'other', 'other', 'other'] | count=27 | freq=0.022
+['other', 'consulting_members', 'other', 'consulting_members', 'other'] | count=26 | freq=0.022
+['other', 'presidential_office', 'other', 'presidential_office', 'other'] | count=24 | freq=0.020
+['other', 'unknown', 'end'] | count=9 | freq=0.007
+['other', 'other', 'other', 'presidential_office', 'other'] | count=9 | freq=0.007
+
+Les 5 sequences observees les plus frequentes a partir de unknown:
+['unknown', 'end'] | count=70 | freq=0.213
+['unknown', 'consulting_members', 'consulting_members', 'unknown', 'consulting_members'] | count=4 | freq=0.012
+['unknown', 'unknown', 'end'] | count=4 | freq=0.012
+['unknown', 'other', 'presidential_office', 'consulting_members', 'presidential_office'] | count=3 | freq=0.009
+['unknown', 'consulting_members', 'unknown', 'consulting_members', 'consulting_members'] | count=3 | freq=0.009
+
+Les 5 sequences observees les plus frequentes a partir de college_c:
+['college_c', 'college_a', 'college_c', 'college_b', 'consulting_members'] | count=1 | freq=0.143
+['college_c', 'college_b', 'consulting_members', 'college_etudiant', 'consulting_members'] | count=1 | freq=0.143
+['college_c', 'consulting_members', 'conseil', 'consulting_members', 'consulting_members'] | count=1 | freq=0.143
+['college_c', 'college_c', 'consulting_members', 'ext_members', 'college_etudiant'] | count=1 | freq=0.143
+['college_c', 'consulting_members', 'ext_members', 'college_etudiant', 'ext_members'] | count=1 | freq=0.143
+
+Les 5 sequences observees les plus frequentes a partir de college_members:
+['college_members', 'college_b', 'college_etudiant', 'presidential_office', 'college_b'] | count=1 | freq=0.125
+['college_members', 'college_etudiant', 'college_etudiant', 'college_members', 'presidential_office'] | count=1 | freq=0.125
+['college_members', 'presidential_office', 'college_b', 'consulting_members', 'college_b'] | count=1 | freq=0.125
+['college_members', 'consulting_members', 'presidential_office', 'presidential_office', 'presidential_office'] | count=1 | freq=0.125
+['college_members', 'consulting_members', 'presidential_office', 'presidential_office', 'consulting_members'] | count=1 | freq=0.125
