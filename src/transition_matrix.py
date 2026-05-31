@@ -1,208 +1,265 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Mon Jul 21 11:01:31 2025
+"""Analyse de sequences textuelles avec une matrice de transition de Markov."""
 
-@author: hugodumoulin
-"""
-import re
-import pandas as pd
-import os
-import matplotlib.pyplot as plt
-from collections import defaultdict
-import heapq
-import networkx as nx
-import webcolors
-from collections import defaultdict, Counter
+from __future__ import annotations
 
-# import pygraphviz as pgv
-
+import argparse
 import math
+import os
+import re
+from collections import Counter, defaultdict
+from pathlib import Path
 
-# def process_sequence(sequence):
-#     # Ajouter "début" au début de la séquence
-#     sequence = ['start'] + sequence.tolist()
-    
-#     # Remplacer None par "fin"
-#     # sequence = ['end' if color is None else color for color in sequence]
-#     sequence = ['end' if pd.isna(color) else color for color in sequence]
-#     return sequence
-
-def process_sequence(sequence):
-    # Ajouter "start" au début
-    sequence = ['start'] + sequence.tolist()
-    
-    new_seq = []
-    for color in sequence:
-        if pd.isna(color):
-            new_seq.append('end')
-            break  # arrêter dès le premier NaN
-        else:
-            new_seq.append(color)
-    return new_seq
+import pandas as pd
 
 
-def build_transition_matrix(df):
-    sequences = df.apply(process_sequence, axis=1)
-    print(sequences)
-# Fonction pour construire la matrice de transition d'un modèle de Markov
+PROJECT_DIR = Path(__file__).resolve().parent
+DEFAULT_INPUT = PROJECT_DIR / "extraction_rda.csv"
+DEFAULT_METADATA = PROJECT_DIR / "metadata.tsv"
+DEFAULT_OUTPUT_ROOT = PROJECT_DIR / "outputs"
+
+
+def process_sequence(sequence, start_state="start", end_state="end"):
+    """Ajoute un etat de depart et coupe la sequence au premier NaN."""
+    values = [start_state] + sequence.tolist()
+
+    processed = []
+    for value in values:
+        if pd.isna(value):
+            processed.append(end_state)
+            break
+        processed.append(value)
+
+    return processed
+
+
+def iter_sequences(df, start_state="start", end_state="end"):
+    """Retourne les sequences ligne par ligne depuis un dataframe transpose."""
+    return df.apply(
+        lambda row: process_sequence(row, start_state=start_state, end_state=end_state),
+        axis=1,
+    )
+
+
+def build_transition_counts(df, start_state="start", end_state="end"):
+    """Compte les transitions observees entre deux etats consecutifs."""
     transitions = defaultdict(lambda: defaultdict(int))
 
-    # Compter les transitions entre couleurs successives
-    for seq in sequences:
-        for i in range(len(seq) - 1):
-            transitions[seq[i]][seq[i + 1]] += 1
-    
-    # Normaliser pour obtenir les probabilités de transition
+    for sequence in iter_sequences(df, start_state=start_state, end_state=end_state):
+        for current_state, next_state in zip(sequence, sequence[1:]):
+            transitions[current_state][next_state] += 1
+
+    return transitions
+
+
+def normalize_transition_counts(transitions):
+    """Normalise les comptes de transition en probabilites."""
     transition_matrix = {}
-    for color_from, transition_dict in transitions.items():
-        total_transitions = sum(transition_dict.values()) #le total des transitions à partir d'une couleur
-        
-        # if total_transitions == 0:
-        #         # état terminal (ex: 'end'), on ne normalise pas, pour éviter les nan
-        #         transition_matrix[color_from] = {}
-        #         continue
-        
-        transition_matrix[color_from] = {color_to: count / total_transitions
-                                        for color_to, count in transition_dict.items()}#normalisation
-    
-    with open("transition_matrix.txt", "w") as file:
-    # Afficher la matrice de transition
-        for color_from, transition_dict in transition_matrix.items():
-            print(f"From {color_from}:")
-            file.write(f"From {color_from}:\n")
-            for color_to, prob in transition_dict.items():
-                file.write(f"  To {color_to}: {prob:.2f}\n")
-                print(f"  To {color_to}: {prob:.2f}")
-            
+
+    for state_from, transition_counts in transitions.items():
+        total = sum(transition_counts.values())
+        if total == 0:
+            transition_matrix[state_from] = {}
+            continue
+
+        transition_matrix[state_from] = {
+            state_to: count / total for state_to, count in transition_counts.items()
+        }
+
     return transition_matrix
 
-def get_top_observed_sequences(df, start_state, length, n):
-    """
-    Retourne les n séquences réellement observées les plus fréquentes
-    à partir d'un état donné.
-    """
-    sequences = df.apply(process_sequence, axis=1)
 
+def build_transition_matrix(df, start_state="start", end_state="end"):
+    transitions = build_transition_counts(
+        df,
+        start_state=start_state,
+        end_state=end_state,
+    )
+    return normalize_transition_counts(transitions)
+
+
+def get_top_observed_sequences(df, start_state, length, n):
+    """Retourne les n sequences observees les plus frequentes depuis un etat."""
     observed = Counter()
 
-    for seq in sequences:
-        for i, state in enumerate(seq):
+    for sequence in iter_sequences(df):
+        for index, state in enumerate(sequence):
             if state == start_state:
-                observed_seq = tuple(seq[i:i + length])
-                observed[observed_seq] += 1
+                observed[tuple(sequence[index : index + length])] += 1
 
+    total = sum(observed.values())
+    if total == 0:
+        return []
+
+    return [
+        {"sequence": list(sequence), "count": count, "frequency": count / total}
+        for sequence, count in observed.most_common(n)
+    ]
+
+
+def get_top_observed_sequences_in_corpus(df, length, n):
+    """Retourne les n prefixes de sequences les plus frequents dans le corpus."""
+    observed = Counter(tuple(sequence[:length]) for sequence in iter_sequences(df))
     total = sum(observed.values())
 
     if total == 0:
         return []
 
-    top_sequences = observed.most_common(n)
-
     return [
-        {
-            "sequence": list(seq),
-            "count": count,
-            "frequency": count / total
-        }
-        for seq, count in top_sequences
+        {"sequence": list(sequence), "count": count, "frequency": count / total}
+        for sequence, count in observed.most_common(n)
     ]
 
-def get_top_observed_sequences_in_corpus(df, length, n):
-    """
-    Retourne les n séquences réellement observées les plus fréquentes
-    dans tout le corpus, tronquées à length items.
-    """
-    sequences = df.apply(process_sequence, axis=1)
 
-    observed = Counter(tuple(seq[:length]) for seq in sequences)
-    total = sum(observed.values())
-
-    return [
-        {
-            "sequence": list(seq),
-            "count": count,
-            "frequency": count / total
-        }
-        for seq, count in observed.most_common(n)
-    ]
-
-    
-import math
-
-def circle_layout(G, radius=5):
-    nodes = list(G.nodes())
-    n = len(nodes)
-
-    pos = {}
-    for i, node in enumerate(nodes):
-        angle = 2 * math.pi * i / n
-        x = radius * math.cos(angle)
-        y = radius * math.sin(angle)
-        pos[node] = (x, y)
-
-    return pos
+def write_transition_matrix(transition_matrix, output_path):
+    with output_path.open("w", encoding="utf-8") as file:
+        for state_from, transition_dict in transition_matrix.items():
+            file.write(f"From {state_from}:\n")
+            for state_to, probability in transition_dict.items():
+                file.write(f"  To {state_to}: {probability:.2f}\n")
 
 
-def plot_transition_tree_v_weights_curved_labels(transition_matrix, partition_value, partition):
-    G = nx.DiGraph()
+def write_top_sequences(df, transition_matrix, output_path, length, n):
+    with output_path.open("w", encoding="utf-8") as file:
+        file.write(
+            f"Les 10 sequences observees les plus frequentes dans le corpus "
+            f"(longueur {length}) :\n"
+        )
 
-    # Construire le graphe
-    for u, trans in transition_matrix.items():
-        for v, prob in trans.items():
-            G.add_edge(u, v, weight=prob)
+        top_corpus_sequences = get_top_observed_sequences_in_corpus(
+            df=df,
+            length=length,
+            n=10,
+        )
+        if not top_corpus_sequences:
+            file.write("Aucune sequence observee.\n")
+        else:
+            for item in top_corpus_sequences:
+                file.write(
+                    f"{item['sequence']} "
+                    f"| count={item['count']} "
+                    f"| freq={item['frequency']:.3f}\n"
+                )
 
-    # Sortantes dominantes
-    most_probable_edges = {
-        u: max(trans, key=trans.get)
-        for u, trans in transition_matrix.items() if trans
+        file.write("\n" + "=" * 80 + "\n")
+
+        for state in transition_matrix:
+            file.write(
+                f"\nLes {n} sequences observees les plus frequentes "
+                f"a partir de {state}:\n"
+            )
+
+            top_observed_sequences = get_top_observed_sequences(
+                df=df,
+                start_state=state,
+                length=length,
+                n=n,
+            )
+
+            if not top_observed_sequences:
+                file.write("Aucune sequence observee.\n")
+                continue
+
+            for item in top_observed_sequences:
+                file.write(
+                    f"{item['sequence']} "
+                    f"| count={item['count']} "
+                    f"| freq={item['frequency']:.3f}\n"
+                )
+
+
+def circle_layout(graph, radius=5):
+    nodes = list(graph.nodes())
+    if not nodes:
+        return {}
+
+    return {
+        node: (
+            radius * math.cos(2 * math.pi * index / len(nodes)),
+            radius * math.sin(2 * math.pi * index / len(nodes)),
+        )
+        for index, node in enumerate(nodes)
     }
 
-    # Entrantes dominantes
+
+def plot_transition_graph(
+    transition_matrix,
+    output_path,
+    partition_value=None,
+    partition=None,
+    min_label_probability=0.10,
+):
+    import matplotlib.pyplot as plt
+    import networkx as nx
+
+    graph = nx.DiGraph()
+
+    for state_from, transitions in transition_matrix.items():
+        for state_to, probability in transitions.items():
+            graph.add_edge(state_from, state_to, weight=probability)
+
+    if graph.number_of_edges() == 0:
+        return
+
+    most_probable_edges = {
+        state_from: max(transitions, key=transitions.get)
+        for state_from, transitions in transition_matrix.items()
+        if transitions
+    }
+
     best_incoming = {}
-    for u, v, d in G.edges(data=True):
-        w = d['weight']
-        if v not in best_incoming or w > best_incoming[v][1]:
-            best_incoming[v] = (u, w)
+    for state_from, state_to, data in graph.edges(data=True):
+        weight = data["weight"]
+        if state_to not in best_incoming or weight > best_incoming[state_to][1]:
+            best_incoming[state_to] = (state_from, weight)
 
-    pos = circle_layout(G, radius=6)
+    position = circle_layout(graph, radius=6)
+    weights = [data["weight"] for _, _, data in graph.edges(data=True)]
+    weight_min = min(weights)
+    weight_max = max(weights)
 
-    # --- Épaisseur proportionnelle à la probabilité ---
-    weights = [d['weight'] for _, _, d in G.edges(data=True)]
-    w_min, w_max = min(weights), max(weights)
-
-    def scale(w, wmin=w_min, wmax=w_max, min_w=0.2, max_w=5):
-        if wmax == wmin:
-            return (min_w + max_w) / 2
-        return min_w + (w - wmin) / (wmax - wmin) * (max_w - min_w)
+    def scale_width(weight, min_width=0.2, max_width=5):
+        if weight_max == weight_min:
+            return (min_width + max_width) / 2
+        return min_width + (weight - weight_min) / (weight_max - weight_min) * (
+            max_width - min_width
+        )
 
     edge_colors = []
     edge_widths = []
 
-    for u, v, d in G.edges(data=True):
-        lw = scale(d["weight"])
-        if v == most_probable_edges.get(u):
+    for state_from, state_to, data in graph.edges(data=True):
+        line_width = scale_width(data["weight"])
+        if state_to == most_probable_edges.get(state_from):
             edge_colors.append("red")
-            edge_widths.append(max(lw*1.5, 3))
-        elif v in best_incoming and u == best_incoming[v][0]:
+            edge_widths.append(max(line_width * 1.5, 3))
+        elif (
+            state_to in best_incoming
+            and state_from == best_incoming[state_to][0]
+        ):
             edge_colors.append("#8fd3ff")
-            edge_widths.append(max(lw*1.5, 3))
+            edge_widths.append(max(line_width * 1.5, 3))
         else:
             edge_colors.append("lightgray")
-            edge_widths.append(lw)
+            edge_widths.append(line_width)
 
     plt.figure(figsize=(10, 10))
-    ax = plt.gca()
-    
+    axis = plt.gca()
+
     node_size = 1400
     node_radius = math.sqrt(node_size) / 2
 
-
-    nx.draw_networkx_nodes(G, pos, node_size=node_size,
-                           node_color="lightblue", alpha=0.9)
-
+    nx.draw_networkx_nodes(
+        graph,
+        position,
+        node_size=node_size,
+        node_color="lightblue",
+        alpha=0.9,
+    )
     nx.draw_networkx_edges(
-        G, pos,
+        graph,
+        position,
         edge_color=edge_colors,
         width=edge_widths,
         arrows=True,
@@ -210,60 +267,51 @@ def plot_transition_tree_v_weights_curved_labels(transition_matrix, partition_va
         arrowsize=15,
         connectionstyle="arc3,rad=0.25",
         min_source_margin=node_radius,
-        min_target_margin=node_radius
+        min_target_margin=node_radius,
     )
+    nx.draw_networkx_labels(graph, position, font_size=10, font_weight="bold")
 
-
-    nx.draw_networkx_labels(G, pos, font_size=10, font_weight="bold")
-
-    # --- Labels sur les arcs courbés, sauf pour les boucles ---
-    for u, v, d in G.edges(data=True):
-        if d['weight'] <= 0.10:
+    for state_from, state_to, data in graph.edges(data=True):
+        if data["weight"] <= min_label_probability:
             continue
 
-        x1, y1 = pos[u]
-        x2, y2 = pos[v]
+        x1, y1 = position[state_from]
+        x2, y2 = position[state_to]
 
-        if u == v:
-            # Boucle : placer le label simplement au-dessus du noeud
-            xm, ym = x1, y1 + 1  # ajustable selon la taille du noeud
+        if state_from == state_to:
+            x_mid, y_mid = x1, y1 + 1
         else:
-            # Arête normale : calcul Bézier pour le milieu de l'arc
-            r = -0.25  # rad utilisé dans connectionstyle
+            radius = -0.25
+            x_control = (x1 + x2) / 2 + radius * (y1 - y2)
+            y_control = (y1 + y2) / 2 + radius * (x2 - x1)
+            x_mid = 0.25 * x1 + 0.5 * x_control + 0.25 * x2
+            y_mid = 0.25 * y1 + 0.5 * y_control + 0.25 * y2
 
-            # Point de contrôle pour la courbure
-            xc = (x1 + x2)/2 + r*(y1 - y2)
-            yc = (y1 + y2)/2 + r*(x2 - x1)
-
-            # Point milieu t=0.5
-            xm = (1 - 0.5)**2 * x1 + 2*(1 - 0.5)*0.5*xc + 0.5**2*x2
-            ym = (1 - 0.5)**2 * y1 + 2*(1 - 0.5)*0.5*yc + 0.5**2*y2
-
-        # Ajouter le label
-        ax.text(
-            xm, ym,
-            f"{d['weight']:.2f}",
+        axis.text(
+            x_mid,
+            y_mid,
+            f"{data['weight']:.2f}",
             fontsize=8,
-            ha='center',
-            va='center',
-            rotation=0,
-            bbox=dict(facecolor='white', edgecolor='none', alpha=0.5, pad=1)
+            ha="center",
+            va="center",
+            bbox=dict(facecolor="white", edgecolor="none", alpha=0.5, pad=1),
         )
-    title = "Graphe des transitions (labels > 0.10, épaisseur ∝ probabilité)"
+
+    title = "Graphe des transitions (labels > 0.10, epaisseur proportionnelle)"
     if partition_value is not None:
-        title = f" - {partition} : {partition_value} – " + title
-        
+        title = f"{partition or 'partition'} : {partition_value} - {title}"
+
     plt.title(title)
     plt.axis("off")
     plt.tight_layout()
-    plt.savefig('transition_tree_higlight_weights_curved_labels.png', format='png')
-    plt.show()
-    
-def normalize_filename(x):
-    x = str(x).strip()
-    x = os.path.basename(x)
-    x = os.path.splitext(x)[0]
-    return x
+    plt.savefig(output_path, format="png")
+    plt.close()
+
+
+def normalize_filename(value):
+    value = str(value).strip()
+    value = os.path.basename(value)
+    return os.path.splitext(value)[0]
 
 
 def safe_folder_name(value):
@@ -272,158 +320,141 @@ def safe_folder_name(value):
     return value.strip("_")
 
 
-def run_analysis_on_dataframe(df, output_dir, start_color, start_tree, length, n, partition_value=None, partition=None):
-    os.makedirs(output_dir, exist_ok=True)
-
-    old_cwd = os.getcwd()
-    os.chdir(output_dir)
-
-    try:
-        df = df.T
-        df.to_csv("labels.tsv", sep="\t")
-
-        transition_matrix = build_transition_matrix(df)
-
-        with open("top_sequences.txt", "w") as f:
-            f.write("Les 10 séquences complètes les plus observées dans le corpus :\n")
-        
-            top_corpus_sequences = get_top_observed_sequences_in_corpus(
-                        df=df,
-                        length=length,
-                        n=10
-                    )
-            if not top_corpus_sequences:
-                f.write("Aucune séquence observée.\n")
-            else:
-                for item in top_corpus_sequences:
-                    f.write(
-                        f"{item['sequence']} "
-                        f"| count={item['count']} "
-                        f"| freq={item['frequency']:.3f}\n"
-                    )
-        
-            f.write("\n" + "=" * 80 + "\n")
-        
-            for clef in transition_matrix.keys():
-                f.write(f"\nLes {n} séquences réellement observées les plus fréquentes à partir de {clef}:\n")
-        
-                top_observed_sequences = get_top_observed_sequences(
-                    df=df,
-                    start_state=clef,
-                    length=length,
-                    n=n
-                )
-        
-                if not top_observed_sequences:
-                    f.write("Aucune séquence observée.\n")
-                    continue
-        
-                for item in top_observed_sequences:
-                    f.write(
-                        f"{item['sequence']} "
-                        f"| count={item['count']} "
-                        f"| freq={item['frequency']:.3f}\n"
-                    )
-
-
-
-        plot_transition_tree_v_weights_curved_labels(transition_matrix, partition_value, partition)
-
-    finally:
-        os.chdir(old_cwd)
-
-
-def main(
-    file,
-    metadata_file,
-    start_color,
-    start_tree,
+def run_analysis_on_dataframe(
+    df,
+    output_dir,
     length,
     n,
-    partition,
-    filename_col="id",
-    output_root="outputs"
+    partition_value=None,
+    partition=None,
+    start_state="start",
+    end_state="end",
 ):
-    os.chdir("./")
+    output_dir = Path(output_dir)
+    output_dir.mkdir(parents=True, exist_ok=True)
 
-    df = pd.read_csv(file, sep=";")
+    labels = df.T
+    labels.to_csv(output_dir / "labels.tsv", sep="\t")
+
+    transition_matrix = build_transition_matrix(
+        labels,
+        start_state=start_state,
+        end_state=end_state,
+    )
+    write_transition_matrix(transition_matrix, output_dir / "transition_matrix.txt")
+    write_top_sequences(
+        labels,
+        transition_matrix,
+        output_dir / "top_sequences.txt",
+        length=length,
+        n=n,
+    )
+    plot_transition_graph(
+        transition_matrix,
+        output_dir / "transition_tree_higlight_weights_curved_labels.png",
+        partition_value=partition_value,
+        partition=partition,
+    )
+
+    return transition_matrix
+
+
+def load_data(input_file, metadata_file=None, filename_col="id"):
+    df = pd.read_csv(input_file, sep=";")
+    df.columns = [normalize_filename(column) for column in df.columns]
+
+    if metadata_file is None:
+        return df, None
+
     metadata = pd.read_csv(metadata_file, sep="\t")
-
-    df.columns = [normalize_filename(col) for col in df.columns]
     metadata[filename_col] = metadata[filename_col].apply(normalize_filename)
+    return df, metadata
 
-    os.makedirs(output_root, exist_ok=True)
-    
-    if metadata_file is None or partition is None:
-        output_dir = os.path.join(output_root, "corpus_complet")
-    
+
+def run_analysis(
+    input_file=DEFAULT_INPUT,
+    metadata_file=DEFAULT_METADATA,
+    partition="decennie",
+    filename_col="id",
+    output_root=DEFAULT_OUTPUT_ROOT,
+    length=5,
+    n=5,
+):
+    output_root = Path(output_root)
+    df, metadata = load_data(input_file, metadata_file, filename_col=filename_col)
+    output_root.mkdir(parents=True, exist_ok=True)
+
+    if metadata is None or partition is None:
         run_analysis_on_dataframe(
             df=df,
-            output_dir=output_dir,
-            start_color=start_color,
-            start_tree=start_tree,
+            output_dir=output_root / "corpus_complet",
             length=length,
             n=n,
-            partition_value="corpus_complet", 
-            partition=None
+            partition_value="corpus_complet",
+            partition=None,
         )
-
         return
 
     for partition_value, metadata_part in metadata.groupby(partition):
         selected_files = metadata_part[filename_col].astype(str).tolist()
-
-        existing_files = [col for col in df.columns if col in selected_files]
+        existing_files = [column for column in df.columns if column in selected_files]
         missing_files = sorted(set(selected_files) - set(df.columns))
 
         print("\n" + "=" * 80)
         print(f"Partition : {partition_value}")
-        print(f"{len(existing_files)} fichiers trouvés dans extraction_rda.csv")
+        print(f"{len(existing_files)} fichiers trouves dans {Path(input_file).name}")
 
         if missing_files:
-            print(f"{len(missing_files)} fichiers absents de extraction_rda.csv :")
-            for f in missing_files:
-                print(f"  - {f}")
+            print(f"{len(missing_files)} fichiers absents de {Path(input_file).name}")
 
         if not existing_files:
-            print(f"Partition ignorée : aucune colonne correspondante.")
+            print("Partition ignoree : aucune colonne correspondante.")
             continue
 
-        df_part = df[existing_files]
-
-        output_dir = os.path.join(output_root, safe_folder_name(partition_value))
-
         run_analysis_on_dataframe(
-            df=df_part,
-            output_dir=output_dir,
-            start_color=start_color,
-            start_tree=start_tree,
+            df=df[existing_files],
+            output_dir=output_root / safe_folder_name(partition_value),
             length=length,
-            n=n, 
+            n=n,
             partition_value=partition_value,
-            partition=partition
+            partition=partition,
         )
 
-    
-# file ="labels_T.csv"
-file="extraction_rda.csv"
-partition = "decennie"
-metadata_file = "metadata.tsv"
 
-start_color = 'start'
-start_tree = 'start'
-length=5
-n=5
-main(
-    file=file,
-    metadata_file=metadata_file,
-    start_color=start_color,
-    start_tree=start_tree,
-    length=length,
-    n=n,
-    partition=partition,
-    filename_col="id",
-    output_root="outputs"
-)    
-    
-    
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description="Construit des matrices de transition de Markov sur des sequences d'etiquettes."
+    )
+    parser.add_argument("--input", default=DEFAULT_INPUT, type=Path)
+    parser.add_argument("--metadata", default=DEFAULT_METADATA, type=Path)
+    parser.add_argument("--partition", default="decennie")
+    parser.add_argument("--filename-col", default="id")
+    parser.add_argument("--output-root", default=DEFAULT_OUTPUT_ROOT, type=Path)
+    parser.add_argument("--length", default=5, type=int)
+    parser.add_argument("--top-n", default=5, type=int)
+    parser.add_argument(
+        "--no-metadata",
+        action="store_true",
+        help="Analyse tout le corpus sans partition metadata.",
+    )
+    return parser.parse_args()
+
+
+def main():
+    args = parse_args()
+    metadata_file = None if args.no_metadata else args.metadata
+    partition = None if args.no_metadata else args.partition
+
+    run_analysis(
+        input_file=args.input,
+        metadata_file=metadata_file,
+        partition=partition,
+        filename_col=args.filename_col,
+        output_root=args.output_root,
+        length=args.length,
+        n=args.top_n,
+    )
+
+
+if __name__ == "__main__":
+    main()
