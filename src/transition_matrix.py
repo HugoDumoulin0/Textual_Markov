@@ -405,7 +405,9 @@ def run_analysis(
         print(f"{len(existing_files)} fichiers trouves dans {Path(input_file).name}")
 
         if missing_files:
-            print(f"{len(missing_files)} fichiers absents de {Path(input_file).name}")
+            print(f"{len(missing_files)} fichiers absents de {Path(input_file).name} :")
+            for missing_file in missing_files:
+                print(f"  - {missing_file}")
 
         if not existing_files:
             print("Partition ignoree : aucune colonne correspondante.")

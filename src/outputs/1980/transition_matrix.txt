@@ -1,93 +1,137 @@
 From start:
-  To unknown: 0.10
-  To presidential_office: 0.80
-  To consulting_members: 0.10
-From unknown:
-  To presidential_office: 0.16
-  To consulting_members: 0.20
-  To college_a: 0.02
-  To unknown: 0.20
-  To end: 0.23
-  To ext_members: 0.05
-  To college_b: 0.05
-  To other: 0.05
-  To conseil: 0.02
-  To college_biatss: 0.02
-From presidential_office:
-  To consulting_members: 0.14
-  To college_biatss: 0.12
-  To college_b: 0.10
-  To unknown: 0.13
-  To presidential_office: 0.22
-  To college_a: 0.08
-  To college_etudiant: 0.09
-  To ext_members: 0.03
-  To other: 0.07
-  To conseil: 0.01
-From consulting_members:
-  To presidential_office: 0.28
-  To consulting_members: 0.17
-  To college_a: 0.17
-  To unknown: 0.12
-  To other: 0.05
-  To ext_members: 0.03
-  To college_b: 0.07
-  To college_biatss: 0.08
-  To college_etudiant: 0.01
-  To conseil: 0.01
-From college_biatss:
-  To consulting_members: 0.18
-  To presidential_office: 0.39
-  To college_b: 0.09
-  To college_biatss: 0.12
-  To other: 0.09
-  To unknown: 0.03
-  To college_a: 0.06
-  To college_etudiant: 0.03
-From college_a:
-  To consulting_members: 0.23
-  To presidential_office: 0.25
-  To college_etudiant: 0.06
-  To college_a: 0.21
-  To college_biatss: 0.04
-  To ext_members: 0.04
-  To unknown: 0.02
-  To college_b: 0.10
-  To conseil: 0.02
-  To other: 0.02
-From college_b:
-  To presidential_office: 0.36
-  To college_etudiant: 0.10
-  To college_a: 0.17
-  To college_biatss: 0.05
-  To consulting_members: 0.17
-  To college_b: 0.02
-  To other: 0.12
-  To unknown: 0.02
-From other:
-  To consulting_members: 0.14
-  To presidential_office: 0.55
-  To other: 0.07
-  To conseil: 0.03
-  To college_b: 0.14
-  To college_etudiant: 0.07
-From college_etudiant:
-  To presidential_office: 0.44
-  To college_b: 0.22
-  To consulting_members: 0.11
-  To college_a: 0.07
-  To ext_members: 0.04
-  To other: 0.04
+  To presidential_office: 0.85
+  To other: 0.06
+  To college_a: 0.03
+  To college_b: 0.01
   To unknown: 0.04
+  To consulting_members: 0.01
+From presidential_office:
+  To unknown: 0.12
+  To other: 0.12
+  To college_etudiant: 0.08
+  To college_a: 0.10
+  To college_biatss: 0.08
+  To consulting_members: 0.12
+  To presidential_office: 0.20
+  To conseil: 0.04
+  To college_c: 0.01
+  To college_chercheur: 0.00
+  To college_b: 0.11
+  To end: 0.02
+  To ext_members: 0.01
+From unknown:
+  To presidential_office: 0.19
+  To end: 0.17
+  To other: 0.10
+  To consulting_members: 0.12
+  To unknown: 0.22
   To college_etudiant: 0.04
-From ext_members:
-  To presidential_office: 0.64
-  To consulting_members: 0.09
-  To college_b: 0.09
+  To college_b: 0.05
+  To conseil: 0.03
+  To college_biatss: 0.03
+  To college_a: 0.06
+  To ext_members: 0.01
+From other:
+  To other: 0.15
+  To presidential_office: 0.29
+  To consulting_members: 0.11
+  To unknown: 0.06
+  To college_a: 0.09
+  To college_etudiant: 0.08
+  To college_biatss: 0.05
+  To college_b: 0.12
+  To conseil: 0.03
+  To college_chercheur: 0.00
+  To ext_members: 0.01
+  To end: 0.01
+From college_etudiant:
+  To presidential_office: 0.32
   To college_etudiant: 0.09
-  To college_biatss: 0.09
+  To college_biatss: 0.06
+  To college_b: 0.12
+  To unknown: 0.05
+  To college_a: 0.09
+  To consulting_members: 0.11
+  To other: 0.13
+  To college_c: 0.00
+  To conseil: 0.02
+  To college_chercheur: 0.00
+  To ext_members: 0.01
+From college_a:
+  To presidential_office: 0.24
+  To consulting_members: 0.12
+  To college_biatss: 0.05
+  To college_a: 0.14
+  To college_b: 0.09
+  To unknown: 0.07
+  To college_etudiant: 0.10
+  To college_c: 0.00
+  To other: 0.12
+  To conseil: 0.03
+  To ext_members: 0.03
+  To end: 0.00
+From college_biatss:
+  To college_b: 0.11
+  To presidential_office: 0.37
+  To unknown: 0.05
+  To college_biatss: 0.05
+  To college_a: 0.07
+  To college_c: 0.01
+  To other: 0.12
+  To college_etudiant: 0.08
+  To consulting_members: 0.14
+  To college_chercheur: 0.01
+  To conseil: 0.01
+From college_b:
+  To presidential_office: 0.32
+  To college_etudiant: 0.11
+  To other: 0.12
+  To college_biatss: 0.06
+  To college_b: 0.10
+  To consulting_members: 0.12
+  To college_a: 0.10
+  To college_c: 0.00
+  To conseil: 0.02
+  To end: 0.01
+  To unknown: 0.04
+  To ext_members: 0.01
+From consulting_members:
+  To presidential_office: 0.25
+  To consulting_members: 0.14
+  To conseil: 0.05
+  To ext_members: 0.01
+  To college_b: 0.12
+  To college_biatss: 0.06
+  To college_etudiant: 0.08
+  To unknown: 0.08
+  To college_a: 0.10
+  To other: 0.12
 From conseil:
-  To college_a: 0.17
-  To unknown: 0.50
-  To other: 0.17
-  To college_etudiant: 0.17
+  To consulting_members: 0.13
+  To conseil: 0.10
+  To presidential_office: 0.26
+  To other: 0.16
+  To college_biatss: 0.03
+  To end: 0.03
+  To college_a: 0.04
+  To unknown: 0.19
+  To college_b: 0.06
+  To college_etudiant: 0.02
+From ext_members:
+  To presidential_office: 0.51
+  To consulting_members: 0.09
+  To college_b: 0.06
+  To other: 0.11
+  To college_a: 0.14
+  To unknown: 0.03
+  To college_etudiant: 0.03
+  To college_biatss: 0.03
+From college_c:
+  To college_b: 0.31
+  To presidential_office: 0.38
+  To college_etudiant: 0.08
+  To unknown: 0.08
+  To other: 0.15
+From college_chercheur:
+  To presidential_office: 0.75
+  To consulting_members: 0.25
