@@ -34,7 +34,7 @@ Par defaut, le script lit :
 
 et genere les sorties dans `src/outputs/`, partitionnees par la colonne `decennie`.
 
-## Pour reproduire les résultats de l'article
+## Pour reproduire les résultats de la présentation au colloque Démocratie à l'université
 
 Depuis la racine du projet, apres installation des dependances :
 
@@ -49,7 +49,7 @@ python3 src/transition_matrix.py \
   --top-n 5
 ```
 
-Cette commande regenere les resultats par decennie dans `src/outputs/`.
+Cette commande regénère les reésultats par décennie dans `src/outputs/`.
 
 ## Options utiles
 
@@ -65,7 +65,7 @@ Changer la partition :
 python3 src/transition_matrix.py --partition annee
 ```
 
-Changer la longueur des sequences observees et le nombre de resultats :
+Changer la longueur des séquences observées et le nombre de résultats :
 
 ```bash
 python3 src/transition_matrix.py --length 5 --top-n 10
@@ -82,7 +82,7 @@ python3 src/transition_matrix.py \
 
 ## Sorties
 
-Pour chaque partition, le script cree :
+Pour chaque partition, le script crée :
 
 - `labels.tsv` : labels transposes, avec un document par ligne.
 - `transition_matrix.txt` : probabilites de transition entre categories.
@@ -95,8 +95,10 @@ Pour chaque partition, le script cree :
 python3 -m unittest discover -s tests
 ```
 
-Les tests couvrent la logique de base : coupe au premier `NaN`, calcul et normalisation des transitions, et comptage des sequences observees.
+Les tests couvrent la logique de base : coupe au premier `NaN`, calcul et normalisation des transitions, et comptage des séquences observées.
 
-## Reference
+## References
 
-Diwersy, S., Dumoulin, H., Bordes, E., Montrichard, C., Sitri, F. (2026), "La democratie universitaire vue a travers les comptes rendus de CA : analyse discursive diachronique (1984-2018)", colloque Démocratie a l'universite, Universite d'Orleans.
+Dumoulin, H. (2024), "Lire le Désordre des familles avec l'analyse automatique du discours. Une enquête sur l'émergence du genre du rapport", colloque international Effet Foucault, université Paris-I Sorbonne, 13 décembre 2024.
+
+Diwersy, S., Dumoulin, H., Bordes, E., Montrichard, C., Sitri, F. (2026), "La démocratie universitaire vue a travers les comptes rendus de CA : analyse discursive diachronique (1984-2018)", colloque Démocratie a l'universite, Universite d'Orleans.
